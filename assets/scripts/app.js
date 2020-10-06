@@ -1,14 +1,14 @@
-//18-9
-
+//18-10
+// now lets create posts and send it off to the server
 const liElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post')
 
 
-function sendHttpRequest(method, url) {
+function sendHttpRequest(method, url, data) {
     const xhr = new XMLHttpRequest()
 
     xhr.open(method, url);
-    xhr.send();
+    xhr.send(JSON.stringify(data)); // you need to pass json data as the server requires that. it would take data in any other from
     xhr.responseType = 'json';
 
     const promise = new Promise((res, rej) => {
@@ -34,8 +34,18 @@ async function fetchPosts() {
         liElement.append(postEl);
     }
 }
+async function createPost(title, content) {
+    const data = {
+        title: title,
+        body: content,
+        userId: Math.random()
+    }
+    sendHttpRequest('POST', 'https://jsonplaceholder.typicode.com/posts', data); //data is the object we will be passing
+}
 
-fetchPosts()
+
+fetchPosts();
+createPost('how to get into relationship', 'this comes with experience and reflection');
 
 
 
