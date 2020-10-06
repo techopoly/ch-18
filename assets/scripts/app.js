@@ -1,5 +1,10 @@
-//18-10
-// now lets create posts and send it off to the server
+//18-14
+// lets handle error
+/* there might be 2 kinds of error. 
+browser side : when the browser fails to send any request to the server. ex: slow internet/ no internet
+server side: when we successfully send the request but the server fails to send back any response. ex: sending 
+request to wrong path and getting no response */
+
 const liElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post')
 
@@ -8,32 +13,43 @@ function sendHttpRequest(method, url, data) {
     const xhr = new XMLHttpRequest()
 
     xhr.open(method, url);
-    xhr.send(JSON.stringify(data)); // you need to pass json data as the server requires that. it would take data in any other from
+    xhr.send(JSON.stringify(data)); // this part actually send the request to the server
     xhr.responseType = 'json';
 
     const promise = new Promise((res, rej) => {
         xhr.onload = function () {
-            res(xhr.response);
+            if (xhr.status >= 200 && xhr.status < 300) {
+                res(xhr.response);
+            }
+            else {
+                rej('something went wrong. the server did not respond') //this error message is sent to the catch block.max did it in a slightly diff way
+            }
         };
+        xhr.onerror = function () { // when the browser fails to send request
+            rej(new Error('the browser could not send request. something went wrong'))
+        }
     })
     return promise
-
 }
 
 
 async function fetchPosts() {
-    const allPosts = await sendHttpRequest(
-        'GET', 'https://jsonplaceholder.typicode.com/posts'
-    );
-
-    console.log(allPosts);
-    for (const post of allPosts) {
-        const postEl = document.importNode(postTemplate.content, true);
-        postEl.querySelector('h2').textContent = post.title.toUpperCase();
-        postEl.querySelector('p').textContent = post.body;
-        liElement.append(postEl);
+    try {
+        const allPosts = await sendHttpRequest(
+            'GET', 'https://jsonplaceholder.typicode.com/posts'
+        );
+        console.log(allPosts);
+        for (const post of allPosts) {
+            const postEl = document.importNode(postTemplate.content, true);
+            postEl.querySelector('h2').textContent = post.title.toUpperCase();
+            postEl.querySelector('p').textContent = post.body;
+            liElement.append(postEl);
+        }
+    } catch (error) {
+        alert(error)
     }
 }
+
 async function createPost(title, content) {
     const data = {
         title: title,
