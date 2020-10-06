@@ -1,28 +1,44 @@
+//18-9
+
 const liElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post')
 
 
-const xhr = new XMLHttpRequest()
+function sendHttpRequest(method, url) {
+    const xhr = new XMLHttpRequest()
 
-xhr.open('GET', 'https://jsonplaceholder.typicode.com/posts');
-xhr.send();
-xhr.responseType = 'json' //we can use it instead of converting into array with json.parse. it automaly converts into array
+    xhr.open(method, url);
+    xhr.send();
+    xhr.responseType = 'json';
 
-//this is how maxmillian did:
+    const promise = new Promise((res, rej) => {
+        xhr.onload = function () {
+            res(xhr.response);
+        };
+    })
+    return promise
 
-xhr.onload = function () {
-    //     //intoArray = JSON.parse(xhr.response) // converting json into array
-    //     //console.log(intoArray)
-    //     console.log(xhr.response);
+}
 
-    const posts = xhr.response
-    for (const post of posts) {
+
+async function fetchPosts() {
+    const allPosts = await sendHttpRequest(
+        'GET', 'https://jsonplaceholder.typicode.com/posts'
+    );
+
+    console.log(allPosts);
+    for (const post of allPosts) {
         const postEl = document.importNode(postTemplate.content, true);
         postEl.querySelector('h2').textContent = post.title.toUpperCase();
         postEl.querySelector('p').textContent = post.body;
         liElement.append(postEl);
     }
-};
+}
+
+fetchPosts()
+
+
+
 
 
 
