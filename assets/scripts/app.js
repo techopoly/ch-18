@@ -3,7 +3,8 @@
 /* we add header to make sure we send off additional request metadata to the server. 
 -for example what kind of data we want to send
 -this dummy server does not require header as it accepts json data by default
--but some servers might require header*/
+-but some servers might require header
+-for some reason i dont see the content-type, i set in the header, on the Header se */
 
 const liElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post')
