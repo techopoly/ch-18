@@ -1,35 +1,19 @@
-//18-14
-// lets handle error
-/* there might be 2 kinds of error. 
-browser side : when the browser fails to send any request to the server. ex: slow internet/ no internet
-server side: when we successfully send the request but the server fails to send back any response. ex: sending 
-request to wrong path and getting no response */
-
+//18-15
+/* lets work on fetch api.
+you will not understand everything about fetch api but the main concept is that fetch() is a promisified function
+by default that the browser supports.
+-fetch(url) sends the request to the server and recieves response.
+-you can access the response using then() as you do in other promisified async functions
+-then convert the response from streamed json body to workable javascript snapshot with response.
+ */
 const liElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post')
 
 
 function sendHttpRequest(method, url, data) {
-    const xhr = new XMLHttpRequest()
-
-    xhr.open(method, url);
-    xhr.send(JSON.stringify(data)); // this part actually send the request to the server
-    xhr.responseType = 'json';
-
-    const promise = new Promise((res, rej) => {
-        xhr.onload = function () {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                res(xhr.response);
-            }
-            else {
-                rej('something went wrong. the server did not respond') //this error message is sent to the catch block.max did it in a slightly diff way
-            }
-        };
-        xhr.onerror = function () { // when the browser fails to send request
-            rej(new Error('the browser could not send request. something went wrong'))
-        }
+    return fetch(url).then(response => { // eventually returns the parsed response data
+        return response.json()
     })
-    return promise
 }
 
 
