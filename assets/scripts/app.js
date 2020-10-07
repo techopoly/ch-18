@@ -1,6 +1,9 @@
-//18-16
-//lets work on how to send post request to the server.
-/* as we do in the httpXMLRequest, we will add an object in the argument in the fetch() to define the method */
+//18-17
+//lets work on adding header.
+/* we add header to make sure we send off additional request metadata to the server. 
+-for example what kind of data we want to send
+-this dummy server does not require header as it accepts json data by default
+-but some servers might require header*/
 
 const liElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post')
@@ -8,10 +11,13 @@ const postTemplate = document.getElementById('single-post')
 
 function sendHttpRequest(method, url, data) {
 
-    return fetch(url, {  // returns a promise
+    return fetch(url, {  
         method: method,
-        body: JSON.stringify(data)
-    }).then(response => { // eventually returns the parsed response data
+        body: JSON.stringify(data),
+        header : {
+            'Content-Type': 'application/json' // this is one of the typical headers we add to outgoing requests to notify that our request json data
+        }
+    }).then(response => { 
         return response.json()
     })
 }
@@ -41,7 +47,6 @@ async function createPost(title, content) {
     }
     sendHttpRequest('POST', 'https://jsonplaceholder.typicode.com/posts', data); //data is the object we will be passing
 }
-
 
 fetchPosts();
 createPost('how to get into relationship', 'this comes with experience and reflection');
